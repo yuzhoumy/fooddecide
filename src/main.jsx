@@ -1,558 +1,355 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  AlertTriangle,
   ArrowRight,
-  BadgeCheck,
-  Beef,
-  Bike,
-  BriefcaseBusiness,
-  CalendarHeart,
   Check,
-  ChevronRight,
-  Clock3,
-  Flame,
-  Heart,
-  Leaf,
-  LocateFixed,
+  ChevronLeft,
+  HeartHandshake,
   MapPin,
-  RefreshCw,
   Salad,
+  Search,
   Sparkles,
-  Star,
-  Users,
+  UserRound,
   Utensils,
-  Wallet,
-  X,
-  Zap,
 } from 'lucide-react';
 import './styles.css';
 
-const restaurants = [
-  {
-    id: 'mama-thai',
-    name: 'Mama Thai Corner',
-    cuisine: 'Thai',
-    dish: 'Tom Yum Glass Noodles',
-    price: 2,
-    distance: 5,
-    eta: 8,
-    rating: 4.8,
-    spice: 4,
-    vibe: ['comfort', 'adventurous', 'fast'],
-    social: ['solo', 'family', 'date'],
-    tags: ['halal', 'seafood'],
-    avoid: ['nuts'],
-    open: true,
-    photo:
-      'https://images.unsplash.com/photo-1562565652-a0d8f0c59eb4?auto=format&fit=crop&w=900&q=80',
-    highlight: 'steamy, sour-spicy broth that still lands fast',
-  },
-  {
-    id: 'green-lane',
-    name: 'Green Lane Bowls',
-    cuisine: 'Vegetarian',
-    dish: 'Charred Broccoli Grain Bowl',
-    price: 2,
-    distance: 9,
-    eta: 14,
-    rating: 4.6,
-    spice: 1,
-    vibe: ['healthy', 'fast'],
-    social: ['solo', 'business'],
-    tags: ['vegetarian', 'vegan', 'gluten-free'],
-    avoid: ['seafood'],
-    open: true,
-    photo:
-      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80',
-    highlight: 'clean fuel with enough texture to feel satisfying',
-  },
-  {
-    id: 'ember-biryani',
-    name: 'Ember Biryani House',
-    cuisine: 'Indian',
-    dish: 'Chicken Dum Biryani',
-    price: 1,
-    distance: 11,
-    eta: 17,
-    rating: 4.7,
-    spice: 3,
-    vibe: ['comfort', 'adventurous'],
-    social: ['solo', 'family', 'business'],
-    tags: ['halal'],
-    avoid: ['gluten'],
-    open: true,
-    photo:
-      'https://images.unsplash.com/photo-1631515242808-497c3fbd3972?auto=format&fit=crop&w=900&q=80',
-    highlight: 'warm, filling, budget-friendly, and easy to share',
-  },
-  {
-    id: 'kumo-ramen',
-    name: 'Kumo Ramen Bar',
-    cuisine: 'Japanese',
-    dish: 'Miso Mushroom Ramen',
-    price: 3,
-    distance: 7,
-    eta: 12,
-    rating: 4.5,
-    spice: 2,
-    vibe: ['comfort', 'date'],
-    social: ['solo', 'date'],
-    tags: ['vegetarian'],
-    avoid: ['seafood', 'nuts'],
-    open: true,
-    photo:
-      'https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=900&q=80',
-    highlight: 'quiet counter seating and a mellow broth profile',
-  },
-  {
-    id: 'mesa-taco',
-    name: 'Mesa Taco Lab',
-    cuisine: 'Mexican',
-    dish: 'Citrus Carnitas Tacos',
-    price: 2,
-    distance: 6,
-    eta: 10,
-    rating: 4.4,
-    spice: 3,
-    vibe: ['adventurous', 'fast'],
-    social: ['solo', 'date', 'family'],
-    tags: ['gluten-free'],
-    avoid: ['nuts', 'seafood'],
-    open: true,
-    photo:
-      'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=900&q=80',
-    highlight: 'bright flavors, quick counter service, low commitment',
-  },
-  {
-    id: 'harbor-pasta',
-    name: 'Harbor Pasta Studio',
-    cuisine: 'Italian',
-    dish: 'Lemon Ricotta Tagliatelle',
-    price: 3,
-    distance: 13,
-    eta: 19,
-    rating: 4.7,
-    spice: 0,
-    vibe: ['comfort', 'date', 'business'],
-    social: ['date', 'business', 'family'],
-    tags: ['vegetarian'],
-    avoid: ['seafood', 'nuts'],
-    open: true,
-    photo:
-      'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80',
-    highlight: 'polished enough for company without feeling fussy',
-  },
-];
+const preferenceOptions = ['Halal', 'Vegetarian', 'Spicy Tolerance', 'Allergies'];
+const occasionOptions = ['Single', 'Date', 'Family'];
+const priceOptions = ['$', '$$', '$$$'];
 
-const moodOptions = [
-  { id: 'comfort', label: 'Comfort', icon: Heart },
-  { id: 'adventurous', label: 'Adventurous', icon: Sparkles },
-  { id: 'healthy', label: 'Healthy', icon: Salad },
-  { id: 'fast', label: 'Fast', icon: Zap },
-];
-
-const socialOptions = [
-  { id: 'solo', label: 'Solo', icon: Utensils },
-  { id: 'family', label: 'Family', icon: Users },
-  { id: 'date', label: 'Date', icon: CalendarHeart },
-  { id: 'business', label: 'Meeting', icon: BriefcaseBusiness },
-];
-
-const constraintOptions = [
-  { id: 'halal', label: 'Halal', icon: BadgeCheck },
-  { id: 'vegetarian', label: 'Vegetarian', icon: Leaf },
-  { id: 'vegan', label: 'Vegan', icon: Leaf },
-  { id: 'nuts', label: 'No nuts', icon: AlertTriangle, allergy: true },
-  { id: 'seafood', label: 'No seafood', icon: Beef, allergy: true },
-  { id: 'gluten', label: 'No gluten', icon: AlertTriangle, allergy: true },
-];
-
-const cuisineOptions = ['Thai', 'Indian', 'Japanese', 'Mexican', 'Italian', 'Vegetarian'];
-
-const initialProfile = {
-  constraints: ['halal', 'nuts'],
-  cuisines: ['Thai', 'Indian', 'Japanese'],
-  spice: 3,
-  budget: 2,
-  travel: 15,
+const emptyProfile = {
+  name: '',
+  eatingPreferences: [],
 };
 
-const initialContext = {
-  mood: 'comfort',
-  social: 'solo',
-  urgency: 2,
+const emptySurvey = {
+  foodCraving: '',
+  diningOccasion: 'Single',
+  priceRange: '$$',
+  maximumDistance: 8,
 };
 
 function App() {
-  const [profile, setProfile] = useState(initialProfile);
-  const [context, setContext] = useState(initialContext);
-  const [spin, setSpin] = useState(0);
-  const [feedback, setFeedback] = useState([]);
-  const [confirmed, setConfirmed] = useState(false);
-
-  const recommendation = useMemo(
-    () => rankRestaurants(profile, context, feedback, spin),
-    [profile, context, feedback, spin],
-  );
-
-  const decisionSeconds = 38 - Math.min(spin * 4 + feedback.length * 2, 18);
-
-  function toggleList(key, value) {
-    setConfirmed(false);
-    setProfile((current) => {
-      const exists = current[key].includes(value);
-      return {
-        ...current,
-        [key]: exists
-          ? current[key].filter((item) => item !== value)
-          : [...current[key], value],
-      };
-    });
-  }
-
-  function rate(type) {
-    setFeedback((items) => [{ id: recommendation.id, type }, ...items].slice(0, 8));
-    if (type !== 'hit') setSpin((value) => value + 1);
-    if (type === 'hit') setConfirmed(true);
-  }
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [userProfile, setUserProfile] = useState(emptyProfile);
 
   return (
-    <main className="app-shell">
-      <section className="topbar" aria-label="CraveLogic status">
-        <div>
-          <p className="eyebrow">CraveLogic</p>
-          <h1>One confident food decision.</h1>
-        </div>
-        <div className="status-strip">
-          <Metric icon={Clock3} label="Decision" value={`${decisionSeconds}s`} />
-          <Metric icon={LocateFixed} label="Radius" value={`${profile.travel} min`} />
-          <Metric icon={Star} label="Fit" value={`${recommendation.fit}%`} />
-        </div>
-      </section>
-
-      <section className="workspace">
-        <aside className="panel profile-panel" aria-label="Taste fingerprint">
-          <div className="panel-heading">
+    <main className="min-h-screen bg-slate-950 text-slate-950">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(34,197,94,0.22),_transparent_34rem),linear-gradient(135deg,_#f8fafc_0%,_#ecfeff_48%,_#fff7ed_100%)] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl flex-col">
+          <header className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="eyebrow">Taste fingerprint</p>
-              <h2>Guardrails</h2>
-            </div>
-            <span className="pill">Live profile</span>
-          </div>
-
-          <ControlGroup label="Diet and allergies">
-            <div className="chip-grid">
-              {constraintOptions.map((item) => (
-                <Chip
-                  key={item.id}
-                  active={profile.constraints.includes(item.id)}
-                  icon={item.icon}
-                  label={item.label}
-                  tone={item.allergy ? 'warning' : 'positive'}
-                  onClick={() => toggleList('constraints', item.id)}
-                />
-              ))}
-            </div>
-          </ControlGroup>
-
-          <ControlGroup label="Cuisine gravity">
-            <div className="cuisine-grid">
-              {cuisineOptions.map((cuisine) => (
-                <button
-                  className={profile.cuisines.includes(cuisine) ? 'cuisine active' : 'cuisine'}
-                  key={cuisine}
-                  onClick={() => toggleList('cuisines', cuisine)}
-                >
-                  {cuisine}
-                </button>
-              ))}
-            </div>
-          </ControlGroup>
-
-          <Slider
-            icon={Flame}
-            label="Spice tolerance"
-            min={0}
-            max={4}
-            value={profile.spice}
-            suffix="/4"
-            onChange={(value) => setProfile({ ...profile, spice: value })}
-          />
-
-          <Slider
-            icon={Wallet}
-            label="Budget tier"
-            min={1}
-            max={4}
-            value={profile.budget}
-            prefix={'$'.repeat(profile.budget)}
-            onChange={(value) => setProfile({ ...profile, budget: value })}
-          />
-        </aside>
-
-        <section className="decision-stage" aria-label="Recommendation">
-          <div className="hero-card">
-            <img src={recommendation.photo} alt={`${recommendation.dish} at ${recommendation.name}`} />
-            <div className="hero-overlay">
-              <div className="fit-badge">
+              <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-sm font-bold text-emerald-700 shadow-sm ring-1 ring-slate-200">
                 <Sparkles size={16} />
-                {recommendation.fit}% best fit
-              </div>
-              <button
-                className="icon-button"
-                aria-label="Spin again"
-                title="Spin again"
-                onClick={() => {
-                  setConfirmed(false);
-                  setSpin((value) => value + 1);
-                }}
-              >
-                <RefreshCw size={20} />
-              </button>
+                CraveLogic
+              </p>
+              <h1 className="max-w-2xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">
+                Food decisions, without the scroll spiral.
+              </h1>
             </div>
-          </div>
-
-          <div className="recommendation">
-            <div>
-              <p className="eyebrow">Best fit right now</p>
-              <h2>{recommendation.name}</h2>
-              <p className="dish">{recommendation.dish}</p>
+            <div className="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200 backdrop-blur">
+              <p className="text-sm font-semibold text-slate-500">Status</p>
+              <p className="mt-1 text-lg font-black text-slate-900">
+                {isRegistered ? `Ready for ${userProfile.name || 'you'}` : 'Onboarding'}
+              </p>
             </div>
-            <div className="quick-facts" aria-label="Restaurant facts">
-              <Fact icon={MapPin} text={`${recommendation.distance} min away`} />
-              <Fact icon={Bike} text={`${recommendation.eta} min delivery`} />
-              <Fact icon={Wallet} text={'$'.repeat(recommendation.price)} />
-              <Fact icon={Flame} text={`${recommendation.spice}/4 spice`} />
-            </div>
-            <div className="why">
-              <h3>Why this fits you</h3>
-              <p>{recommendation.reason}</p>
-            </div>
-            <div className="actions">
-              <button className="primary-action" onClick={() => rate('hit')}>
-                <Check size={19} />
-                Confirm
-              </button>
-              <button className="secondary-action" onClick={() => rate('maybe')}>
-                <ChevronRight size={19} />
-                Maybe
-              </button>
-              <button className="secondary-action" onClick={() => rate('miss')}>
-                <X size={19} />
-                Miss
-              </button>
-            </div>
-            {confirmed && (
-              <div className="confirmed">
-                <BadgeCheck size={18} />
-                Confirmed. This interaction is ready to log to Supabase.
-              </div>
-            )}
-          </div>
-        </section>
+          </header>
 
-        <aside className="panel context-panel" aria-label="Situation dashboard">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">Situation dashboard</p>
-              <h2>Current context</h2>
-            </div>
-            <span className="pill">Open now</span>
-          </div>
-
-          <ControlGroup label="Mood">
-            <Segmented options={moodOptions} value={context.mood} onChange={(mood) => setContext({ ...context, mood })} />
-          </ControlGroup>
-
-          <ControlGroup label="Social setting">
-            <Segmented
-              options={socialOptions}
-              value={context.social}
-              onChange={(social) => setContext({ ...context, social })}
-            />
-          </ControlGroup>
-
-          <Slider
-            icon={Clock3}
-            label="Urgency"
-            min={1}
-            max={4}
-            value={context.urgency}
-            suffix="/4"
-            onChange={(urgency) => setContext({ ...context, urgency })}
-          />
-
-          <Slider
-            icon={LocateFixed}
-            label="Travel tolerance"
-            min={5}
-            max={25}
-            value={profile.travel}
-            suffix=" min"
-            onChange={(travel) => setProfile({ ...profile, travel })}
-          />
-
-          <div className="learning-log">
-            <div className="learning-title">
-              <RefreshCw size={17} />
-              Feedback loop
-            </div>
-            {feedback.length === 0 ? (
-              <p>Ratings will tune the next spin.</p>
+          <section className="grid flex-1 items-center gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+            <IntroPanel isRegistered={isRegistered} userProfile={userProfile} />
+            {isRegistered ? (
+              <RestaurantSearchSurvey userProfile={userProfile} />
             ) : (
-              feedback.slice(0, 3).map((item, index) => (
-                <p key={`${item.id}-${index}`}>
-                  {item.type} registered for {restaurants.find((r) => r.id === item.id)?.name}
-                </p>
-              ))
+              <OnboardingWizard
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
+                userProfile={userProfile}
+                setUserProfile={setUserProfile}
+                onComplete={() => setIsRegistered(true)}
+              />
             )}
-          </div>
-        </aside>
-      </section>
+          </section>
+        </div>
+      </div>
     </main>
   );
 }
 
-function rankRestaurants(profile, context, feedback, spin) {
-  const disliked = new Set(feedback.filter((item) => item.type === 'miss').map((item) => item.id));
-  const maybe = new Set(feedback.filter((item) => item.type === 'maybe').map((item) => item.id));
-
-  const scored = restaurants
-    .filter((restaurant) => restaurant.open)
-    .map((restaurant) => {
-      let score = 45;
-      const reasons = [];
-
-      const hardConstraintsPass = profile.constraints.every((constraint) => {
-        const isAllergy = ['nuts', 'seafood', 'gluten'].includes(constraint);
-        return isAllergy ? !restaurant.avoid.includes(constraint) : restaurant.tags.includes(constraint);
-      });
-
-      if (!hardConstraintsPass) score -= 35;
-      else reasons.push('matches your dietary guardrails');
-
-      if (profile.cuisines.includes(restaurant.cuisine)) {
-        score += 16;
-        reasons.push(`${restaurant.cuisine} is in your cuisine fingerprint`);
-      }
-
-      const spiceGap = Math.abs(profile.spice - restaurant.spice);
-      score += Math.max(0, 12 - spiceGap * 4);
-
-      if (restaurant.vibe.includes(context.mood)) {
-        score += 15;
-        reasons.push(`fits a ${context.mood} mood`);
-      }
-
-      if (restaurant.social.includes(context.social)) {
-        score += 9;
-        reasons.push(`works for ${context.social === 'business' ? 'a meeting' : context.social}`);
-      }
-
-      if (restaurant.price <= profile.budget) score += 8;
-      else score -= (restaurant.price - profile.budget) * 7;
-
-      if (restaurant.distance <= profile.travel) score += 10;
-      else score -= 18;
-
-      if (context.urgency >= 3) score += Math.max(0, 14 - restaurant.eta);
-      if (disliked.has(restaurant.id)) score -= 28;
-      if (maybe.has(restaurant.id)) score -= 9;
-
-      score += restaurant.rating * 2;
-      score += ((spin + restaurant.id.length) % 5) * 2;
-
-      return {
-        ...restaurant,
-        score,
-        fit: Math.max(62, Math.min(98, Math.round(score))),
-        reason: buildReason(restaurant, reasons, context),
-      };
-    })
-    .sort((a, b) => b.score - a.score);
-
-  return scored[spin % Math.min(scored.length, 3)] || scored[0];
-}
-
-function buildReason(restaurant, reasons, context) {
-  const lead = reasons.slice(0, 2).join(', ');
-  const timeHint = context.urgency >= 3 ? 'and it is fast enough for the clock you are on' : 'without making dinner feel like a project';
-  return `${lead ? `${capitalize(lead)}, ` : ''}${restaurant.highlight}, ${timeHint}.`;
-}
-
-function capitalize(value) {
-  return value.charAt(0).toUpperCase() + value.slice(1);
-}
-
-function Metric({ icon: Icon, label, value }) {
+function IntroPanel({ isRegistered, userProfile }) {
   return (
-    <div className="metric">
-      <Icon size={17} />
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
-
-function ControlGroup({ label, children }) {
-  return (
-    <div className="control-group">
-      <label>{label}</label>
-      {children}
-    </div>
-  );
-}
-
-function Chip({ active, icon: Icon, label, onClick, tone }) {
-  return (
-    <button className={`chip ${active ? 'active' : ''} ${tone}`} onClick={onClick}>
-      <Icon size={16} />
-      <span>{label}</span>
-    </button>
-  );
-}
-
-function Segmented({ options, value, onChange }) {
-  return (
-    <div className="segmented">
-      {options.map(({ id, label, icon: Icon }) => (
-        <button key={id} className={value === id ? 'active' : ''} onClick={() => onChange(id)}>
-          <Icon size={18} />
-          <span>{label}</span>
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function Slider({ icon: Icon, label, min, max, value, onChange, prefix = '', suffix = '' }) {
-  return (
-    <div className="slider-row">
-      <div className="slider-label">
-        <span>
-          <Icon size={17} />
-          {label}
-        </span>
-        <strong>{prefix || `${value}${suffix}`}</strong>
+    <aside className="rounded-3xl bg-slate-950 p-6 text-white shadow-2xl shadow-slate-300/60 sm:p-8">
+      <div className="mb-8 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-400 text-slate-950">
+        {isRegistered ? <Search size={28} /> : <UserRound size={28} />}
       </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(event) => onChange(Number(event.target.value))}
-      />
+      <h2 className="mb-4 text-3xl font-black tracking-tight">
+        {isRegistered ? 'Tell us what today needs.' : 'Build your taste profile first.'}
+      </h2>
+      <p className="text-lg leading-8 text-slate-300">
+        {isRegistered
+          ? 'The search survey captures the changing context: craving, occasion, budget, and distance.'
+          : 'Two quick onboarding steps give the recommendation system enough signal to personalize future searches.'}
+      </p>
+
+      <div className="mt-8 grid gap-3">
+        <Signal icon={HeartHandshake} label="Profile" value={userProfile.name || 'Not set yet'} />
+        <Signal
+          icon={Salad}
+          label="Preferences"
+          value={userProfile.eatingPreferences.length ? userProfile.eatingPreferences.join(', ') : 'Pending'}
+        />
+        <Signal icon={MapPin} label="Flow" value={isRegistered ? 'Restaurant survey' : 'Wizard steps'} />
+      </div>
+    </aside>
+  );
+}
+
+function Signal({ icon: Icon, label, value }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl bg-white/10 p-4 ring-1 ring-white/10">
+      <Icon className="shrink-0 text-emerald-300" size={21} />
+      <div className="min-w-0">
+        <p className="text-xs font-bold uppercase text-slate-400">{label}</p>
+        <p className="truncate font-bold text-white">{value}</p>
+      </div>
     </div>
   );
 }
 
-function Fact({ icon: Icon, text }) {
+function OnboardingWizard({ currentStep, setCurrentStep, userProfile, setUserProfile, onComplete }) {
+  const canContinue =
+    currentStep === 0 ? userProfile.name.trim().length > 0 : userProfile.eatingPreferences.length > 0;
+
+  function togglePreference(preference) {
+    setUserProfile((profile) => ({
+      ...profile,
+      eatingPreferences: profile.eatingPreferences.includes(preference)
+        ? profile.eatingPreferences.filter((item) => item !== preference)
+        : [...profile.eatingPreferences, preference],
+    }));
+  }
+
+  function handleNext() {
+    if (!canContinue) return;
+    if (currentStep === 0) setCurrentStep(1);
+    else onComplete();
+  }
+
   return (
-    <span className="fact">
-      <Icon size={16} />
-      {text}
-    </span>
+    <div className="relative overflow-hidden rounded-3xl bg-white p-5 shadow-2xl shadow-slate-300/50 ring-1 ring-slate-200 sm:p-8">
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-bold uppercase text-emerald-700">Onboarding</p>
+          <h2 className="text-2xl font-black text-slate-950">Step {currentStep + 1} of 2</h2>
+        </div>
+        <div className="flex gap-2" aria-label="Onboarding progress">
+          {[0, 1].map((step) => (
+            <span
+              key={step}
+              className={`h-2.5 w-10 rounded-full transition-all duration-300 ${
+                step <= currentStep ? 'bg-emerald-500' : 'bg-slate-200'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="step-transition" key={currentStep}>
+        {currentStep === 0 ? (
+          <QuestionCard
+            icon={UserRound}
+            label="What is your name?"
+            description="This is saved in the userProfile object for future recommendation requests."
+          >
+            <input
+              autoFocus
+              className="mt-5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-lg font-semibold outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+              placeholder="e.g. Alex"
+              value={userProfile.name}
+              onChange={(event) => setUserProfile({ ...userProfile, name: event.target.value })}
+            />
+          </QuestionCard>
+        ) : (
+          <QuestionCard
+            icon={Utensils}
+            label="Eating preferences?"
+            description="Choose every option that should shape restaurant recommendations."
+          >
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {preferenceOptions.map((preference) => {
+                const selected = userProfile.eatingPreferences.includes(preference);
+                return (
+                  <button
+                    key={preference}
+                    type="button"
+                    className={`flex min-h-16 items-center justify-between rounded-2xl border px-4 py-3 text-left font-bold transition ${
+                      selected
+                        ? 'border-emerald-500 bg-emerald-50 text-emerald-900 ring-4 ring-emerald-100'
+                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300 hover:bg-white'
+                    }`}
+                    onClick={() => togglePreference(preference)}
+                  >
+                    {preference}
+                    {selected && <Check size={19} />}
+                  </button>
+                );
+              })}
+            </div>
+          </QuestionCard>
+        )}
+      </div>
+
+      <div className="mt-7 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          className="inline-flex min-h-11 items-center gap-2 rounded-2xl px-4 font-bold text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+          disabled={currentStep === 0}
+          onClick={() => setCurrentStep(0)}
+        >
+          <ChevronLeft size={19} />
+          Back
+        </button>
+        <button
+          type="button"
+          className="inline-flex min-h-12 items-center gap-2 rounded-2xl bg-slate-950 px-5 font-black text-white shadow-lg shadow-slate-300 transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+          disabled={!canContinue}
+          onClick={handleNext}
+        >
+          {currentStep === 0 ? 'Next' : 'Finish onboarding'}
+          <ArrowRight size={19} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function RestaurantSearchSurvey({ userProfile }) {
+  const [surveyResults, setSurveyResults] = useState(emptySurvey);
+
+  function updateSurvey(field, value) {
+    setSurveyResults((current) => ({ ...current, [field]: value }));
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    const payload = {
+      userProfile,
+      surveyResults,
+      submittedAt: new Date().toISOString(),
+    };
+
+    console.log('Restaurant search survey results:', payload);
+  }
+
+  return (
+    <form
+      className="rounded-3xl bg-white p-5 shadow-2xl shadow-slate-300/50 ring-1 ring-slate-200 sm:p-8"
+      onSubmit={handleSubmit}
+    >
+      <div className="mb-6">
+        <p className="text-sm font-bold uppercase text-emerald-700">Restaurant search survey</p>
+        <h2 className="text-3xl font-black tracking-tight text-slate-950">
+          What should we find today, {userProfile.name || 'friend'}?
+        </h2>
+      </div>
+
+      <div className="grid gap-4">
+        <QuestionCard icon={Search} label="What kind of food do you want to eat today?">
+          <input
+            className="mt-5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-lg font-semibold outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+            placeholder="e.g. ramen, tacos, nasi lemak"
+            value={surveyResults.foodCraving}
+            onChange={(event) => updateSurvey('foodCraving', event.target.value)}
+          />
+        </QuestionCard>
+
+        <QuestionCard icon={HeartHandshake} label="Dining occasion?">
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {occasionOptions.map((occasion) => (
+              <label
+                key={occasion}
+                className={`flex min-h-14 cursor-pointer items-center justify-center rounded-2xl border px-4 font-bold transition ${
+                  surveyResults.diningOccasion === occasion
+                    ? 'border-emerald-500 bg-emerald-50 text-emerald-900 ring-4 ring-emerald-100'
+                    : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-white'
+                }`}
+              >
+                <input
+                  className="sr-only"
+                  type="radio"
+                  name="diningOccasion"
+                  value={occasion}
+                  checked={surveyResults.diningOccasion === occasion}
+                  onChange={(event) => updateSurvey('diningOccasion', event.target.value)}
+                />
+                {occasion}
+              </label>
+            ))}
+          </div>
+        </QuestionCard>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <QuestionCard icon={Utensils} label="Price range?">
+            <select
+              className="mt-5 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-lg font-black outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+              value={surveyResults.priceRange}
+              onChange={(event) => updateSurvey('priceRange', event.target.value)}
+            >
+              {priceOptions.map((price) => (
+                <option key={price} value={price}>
+                  {price}
+                </option>
+              ))}
+            </select>
+          </QuestionCard>
+
+          <QuestionCard icon={MapPin} label="Maximum distance?">
+            <div className="mt-5">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-sm font-bold text-slate-500">Distance</span>
+                <span className="rounded-full bg-slate-950 px-3 py-1 text-sm font-black text-white">
+                  {surveyResults.maximumDistance} km
+                </span>
+              </div>
+              <input
+                className="w-full accent-emerald-500"
+                type="range"
+                min="1"
+                max="25"
+                value={surveyResults.maximumDistance}
+                onChange={(event) => updateSurvey('maximumDistance', Number(event.target.value))}
+              />
+            </div>
+          </QuestionCard>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        className="mt-6 inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-emerald-500 px-5 text-lg font-black text-slate-950 shadow-xl shadow-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+      >
+        <Search size={21} />
+        Find Restaurants
+      </button>
+    </form>
+  );
+}
+
+function QuestionCard({ icon: Icon, label, description, children }) {
+  return (
+    <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex gap-4">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+          <Icon size={22} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-xl font-black text-slate-950">{label}</h3>
+          {description && <p className="mt-1 leading-6 text-slate-500">{description}</p>}
+          {children}
+        </div>
+      </div>
+    </section>
   );
 }
 
