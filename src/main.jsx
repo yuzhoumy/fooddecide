@@ -12,7 +12,6 @@ import {
   Salad,
   Search,
   Soup,
-  Sparkles,
   UserRound,
   Utensils,
 } from 'lucide-react';
@@ -24,49 +23,10 @@ const foodTypeOptions = ['Seafood', 'Western', 'Korean', 'Japanese', 'Thai', 'In
 const occasionOptions = ['Single', 'Date', 'Family'];
 const priceLabels = ['$', '$$', '$$$', '$$$$'];
 
-const featureFoods = [
-  {
-    name: 'Herb Pasta',
-    price: '$3',
-    image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Summer Bowl',
-    price: '$4',
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Spiced Tacos',
-    price: '$5',
-    image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=900&q=80',
-  },
-  {
-    name: 'Miso Ramen',
-    price: '$6',
-    image: 'https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=900&q=80',
-  },
-];
-
-const menuItems = [
-  {
-    name: 'Tomato Basil Pasta',
-    description: 'Silky noodles, fresh basil, and a bright house sauce.',
-    price: '$5',
-    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=420&q=80',
-  },
-  {
-    name: 'Crisp Market Salad',
-    description: 'Greens, grains, herbs, and citrus dressing for a clean bite.',
-    price: '$5',
-    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=420&q=80',
-  },
-  {
-    name: 'Golden Soup Set',
-    description: 'Warm broth, soft aromatics, and a quick comfort finish.',
-    price: '$5',
-    image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=420&q=80',
-  },
-];
+const heroFood = {
+  name: 'Fresh restaurant meal',
+  image: 'https://images.unsplash.com/photo-1543352634-a1c51d9f1fa7?auto=format&fit=crop&w=1400&q=85',
+};
 
 const fakeRestaurants = [
   {
@@ -365,12 +325,11 @@ function App() {
       <section className="mx-auto flex min-h-[calc(100vh-3rem)] w-full max-w-[980px] flex-col overflow-hidden rounded-[8px] border-[10px] border-white bg-[#F7B97A] shadow-2xl shadow-[#8f5b22]/25">
         <div className="bg-[#F2E3C6] px-5 pb-8 pt-7 sm:px-10">
           <FlyerHeader isRegistered={isRegistered} userProfile={userProfile} />
-          <FeatureGrid />
+          <HeroFoodImage />
         </div>
 
         <div className="flex flex-1 flex-col gap-6 bg-[#F7B97A] px-5 py-7 sm:px-10">
-          <section className="grid items-start gap-5 lg:grid-cols-[0.86fr_1.14fr]">
-            <WhyChooseUs userProfile={userProfile} isRegistered={isRegistered} />
+          <section className="mx-auto w-full max-w-3xl">
             {isRegistered ? (
               <RestaurantSearchSurvey userProfile={userProfile} />
             ) : (
@@ -396,9 +355,9 @@ function FlyerHeader({ isRegistered, userProfile }) {
       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-4 border-[#2C3E50] bg-white text-[#E67E22] shadow-md">
         <Utensils size={30} />
       </div>
-      <p className="brand-script text-6xl font-bold leading-none text-[#5D6B4E] sm:text-7xl">Delicious</p>
+      <p className="brand-script text-6xl font-bold leading-none text-[#5D6B4E] sm:text-7xl">CraveLogic</p>
       <h1 className="mt-1 text-4xl font-black tracking-[0.18em] text-[#2C3E50] sm:text-6xl">
-        FOOD MENU
+        FOOD CHOICER
       </h1>
       <p className="mx-auto mt-4 max-w-2xl text-justify text-sm font-semibold leading-6 text-[#2C3E50]/80 sm:text-base sm:leading-7">
         {isRegistered
@@ -409,88 +368,15 @@ function FlyerHeader({ isRegistered, userProfile }) {
   );
 }
 
-function FeatureGrid() {
+function HeroFoodImage() {
   return (
-    <section className="relative mx-auto mt-7 max-w-3xl border-4 border-white bg-white/40 p-2 shadow-lg">
-      <div className="grid grid-cols-2 gap-2">
-        {featureFoods.map((food) => (
-          <article key={food.name} className="relative min-h-36 overflow-hidden rounded-[8px] bg-[#8D9A7F] sm:min-h-44">
-            <img className="h-full min-h-36 w-full object-cover sm:min-h-44" src={food.image} alt={food.name} />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 to-transparent p-3">
-              <p className="font-black text-white">{food.name}</p>
-            </div>
-          </article>
-        ))}
-      </div>
-      <div className="absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-[#E67E22] text-4xl font-black text-white shadow-2xl">
-        $3
-      </div>
+    <section className="mx-auto mt-7 max-w-3xl overflow-hidden rounded-[8px] border-4 border-white bg-white/40 p-2 shadow-lg">
+      <img
+        className="h-64 w-full rounded-[8px] object-cover sm:h-80"
+        src={heroFood.image}
+        alt={heroFood.name}
+      />
     </section>
-  );
-}
-
-function WhyChooseUs({ userProfile, isRegistered }) {
-  return (
-    <aside className="rounded-[8px] border-4 border-white bg-[#fffaf0] p-4 shadow-xl">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#E67E22]">Why choose us</p>
-          <h2 className="text-2xl font-black text-[#2C3E50]">Taste Snapshot</h2>
-        </div>
-        <Sparkles className="text-[#E67E22]" size={25} />
-      </div>
-
-      <div className="grid gap-3">
-        {menuItems.map((item) => (
-          <MenuListItem key={item.name} item={item} />
-        ))}
-      </div>
-
-      <div className="mt-4 rounded-[8px] bg-[#F2E3C6] p-4">
-        <p className="text-sm font-black uppercase text-[#5D6B4E]">
-          {isRegistered ? 'Profile ready' : 'Profile building'}
-        </p>
-        <div className="mt-3 grid gap-2 text-sm font-bold leading-6 text-[#2C3E50]">
-          <ProfileLine label="Name" value={userProfile.name || 'Pending'} />
-          <ProfileLine
-            label="Preferences"
-            value={userProfile.eatingPreferences.length ? userProfile.eatingPreferences.join(', ') : 'Pending'}
-          />
-          <ProfileLine label="Spicy" value={`${userProfile.spicyTolerance}/5`} />
-          <ProfileLine
-            label="Allergies"
-            value={userProfile.allergies.length ? userProfile.allergies.join(', ') : 'None selected'}
-          />
-        </div>
-      </div>
-    </aside>
-  );
-}
-
-function MenuListItem({ item }) {
-  return (
-    <article className="flex items-center gap-3 rounded-[8px] bg-white p-3 shadow-sm">
-      <div className="relative h-20 w-20 shrink-0 overflow-visible">
-        <img className="h-full w-full rounded-[8px] object-cover" src={item.image} alt={item.name} />
-        <span className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-[#E67E22] text-sm font-black text-white shadow-md">
-          $5
-        </span>
-      </div>
-      <div className="min-w-0 flex-1">
-        <h3 className="truncate text-base font-black text-[#2C3E50]">{item.name}</h3>
-        <p className="mt-1 line-clamp-2 text-sm font-medium leading-5 text-[#2C3E50]/70">{item.description}</p>
-      </div>
-      <p className="shrink-0 text-lg font-black text-[#E67E22]">{item.price}</p>
-    </article>
-  );
-}
-
-function ProfileLine({ label, value }) {
-  return (
-    <p className="flex justify-between gap-3 border-b border-[#2C3E50]/10 pb-2 last:border-0 last:pb-0">
-      <span className="text-[#2C3E50]/65">{label}</span>
-      <span className="max-w-[58%] truncate text-right">{value}</span>
-    </p>
   );
 }
 
